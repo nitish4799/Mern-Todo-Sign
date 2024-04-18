@@ -5,7 +5,7 @@ const List = require('../models/list');
 router.post("/addTask", async ( req,res ) => {
     try {
         const { title, body, id } = req.body;
-        const existingUser = await User.findOne({ email });
+        const existingUser = await User.findById(id);
         if ( existingUser ){
             const list = new List({title, body, user: existingUser});
             await list.save().then(()=> res.status(200).json({ list }));
@@ -38,9 +38,9 @@ router.put("/updateTask/:id", async (req,res) => {
 
 router.delete("/deleteTask/:id", async (req,res) => {
     try {
-        const { email } = req.body;
-        const existingUser = await User.findOneAndUpdate(
-            { email },
+        const { id } = req.body;
+        const existingUser = await User.findByIdAndUpdate(
+            id ,
             { $pull: { list: req.params.id }}
         )
         if ( existingUser ){
